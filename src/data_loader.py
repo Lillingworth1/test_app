@@ -34,16 +34,16 @@ def preprocess_data(df):
     df = df.copy()
 
     # Fill missing Age values with median
-    df['Age'].fillna(df['Age'].median(), inplace=True)
+    df['Age'] = df['Age'].fillna(df['Age'].median())
 
     # Fill missing Embarked with mode
-    df['Embarked'].fillna(df['Embarked'].mode()[0], inplace=True)
+    df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
 
     # Fill missing Fare with median
-    df['Fare'].fillna(df['Fare'].median(), inplace=True)
+    df['Fare'] = df['Fare'].fillna(df['Fare'].median())
 
     # Drop Cabin (too many missing values)
-    df.drop('Cabin', axis=1, inplace=True, errors='ignore')
+    df = df.drop('Cabin', axis=1, errors='ignore')
 
     # Convert Sex to numeric
     df['Sex'] = df['Sex'].map({'male': 0, 'female': 1})

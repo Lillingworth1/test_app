@@ -52,8 +52,8 @@ def create_title_feature(df):
     if 'Name' not in df.columns:
         return df
 
-    # Extract title from name
-    df['Title'] = df['Name'].str.extract(' ([A-Za-z]+)\.', expand=False)
+    # Extract title from name (using raw string to avoid escape sequence warning)
+    df['Title'] = df['Name'].str.extract(r' ([A-Za-z]+)\.', expand=False)
 
     # Group rare titles
     title_mapping = {
@@ -64,7 +64,7 @@ def create_title_feature(df):
     }
 
     df['Title'] = df['Title'].map(title_mapping)
-    df['Title'].fillna(0, inplace=True)
+    df['Title'] = df['Title'].fillna(0)
 
     return df
 
@@ -86,6 +86,8 @@ def create_fare_bins(df):
 
     # Create fare bins using quartiles
     df['FareBin'] = pd.qcut(df['Fare'], 4, labels=False, duplicates='drop')
+    # Fill any NaN values with most common bin
+    df['FareBin'] = df['FareBin'].fillna(df['FareBin'].mode()[0] if len(df['FareBin'].mode()) > 0 else 0)
 
     return df
 
@@ -108,6 +110,8 @@ def create_age_bins(df):
     # Create age bins: Child (0-12), Teen (13-20), Adult (21-40), Middle (41-60), Senior (61+)
     df['AgeBin'] = pd.cut(df['Age'], bins=[0, 12, 20, 40, 60, 100],
                           labels=[0, 1, 2, 3, 4])
+    # Fill any NaN values with most common bin
+    df['AgeBin'] = df['AgeBin'].fillna(df['AgeBin'].mode()[0] if len(df['AgeBin'].mode()) > 0 else 2)
 
     return df
 
